@@ -11,11 +11,12 @@ const HomeScreen=()=>{
     const DataAPI = async () => {
         try {
           let data = await fetch(
-            "https://sheet.best/api/sheets/bd3f9c9f-d1df-4431-8c52-37b1d3d7fc8e"
+            "https://sheet.best/api/sheets/bd3f9c9f-d1df-4431-8c52-37b1d3d7fc8e?"
           );
           let condata = await data.json();
+          setvalue(condata);
          
-         console.log(condata);
+        // console.log(condata);
         } catch {
           console.log("Error");
         }
@@ -57,21 +58,30 @@ const HomeScreen=()=>{
       console.log(error)
     }
   }
-   
+const handledelete=async()=>{
+  try {
+console.log(index)
+await fetch("https://sheet.best/api/sheets/bd3f9c9f-d1df-4431-8c52-37b1d3d7fc8e/${rowindex}",{
+method : 'DELETE',
+  }
+
+)
+  } catch (error) {
+console.log(error)
+  }
+
+}
     useEffect(()=>{
+      DataAPI();
+
   
-     if(DataAPI!=null)
-     {
-       setvalue(DataAPI())
-
-       console.log( value);
-
-     }
-    },[]); 
+    },[]);
+    console.log(value);
     const renderItemupdated = ({item})=>( 
-      <Text>Student's Name: {item.Name}</Text>   
- 
+      <Text>Player's Name: {item.Name}</Text>   
+    
     );
+    
     return(<View>
         <Text>Hello</Text>
         <TextInput
@@ -81,14 +91,10 @@ const HomeScreen=()=>{
         />
            <TextInput
         placeholder='Age'
-       
-               
+                     
         />
           <TextInput
-        placeholder='Position'
-  
-        
-               
+        placeholder='Position'         
         />
        <TouchableOpacity
      
@@ -98,10 +104,48 @@ const HomeScreen=()=>{
          <Text style={styles.buttonText}>Save Data</Text>
       </TouchableOpacity>
       <FlatList
-       data={value}     
+       data={value}    
        
-       keyExtractor={(item) => item.Age}
-       renderItem={renderItemupdated}
+    //   keyExtractor={(item) => item.index}
+    keyExtractor={(item, index) => index.toString()}
+       
+    //  renderItem={renderItemupdated}
+      renderItem={({item,index})=>{
+        
+   return (
+   <Text> Player's Name : {item.Name}
+   <Text>Players Age : {item.Age}</Text>
+   
+   <TouchableOpacity
+     
+     style={styles.button}
+     onPress={async()=>{
+      try {
+        console.log(index)
+        await fetch(`https://sheet.best/api/sheets/bd3f9c9f-d1df-4431-8c52-37b1d3d7fc8e/${index}`,{
+        method : 'DELETE',
+          }
+        
+        )
+          } catch (error) {
+        console.log(error)
+          }
+
+
+
+     }}
+     
+   >
+      <Text style={styles.buttonText}>Delete</Text>
+      
+   </TouchableOpacity>
+   </Text> )
+   
+  
+   
+   }}
+       
+       
           
         
     />
